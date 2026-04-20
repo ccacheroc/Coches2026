@@ -1,6 +1,6 @@
 ---
 applyTo: 'entities/**/*.py'
-description: 'Reglas específicas para la capa de dominio (entities/)'
+description: 'Reglas específicas para la capa de dominio (entities/): arquitectura, visibilidad, properties y setters'
 ---
 
 # Reglas — Capa `entities/`
@@ -17,26 +17,95 @@ No tiene dependencias con ninguna otra capa del proyecto.
 - ❌ Importar desde `services/`, `ui/` o `persistence/`.
 - ❌ Atributos de instancia públicos sin pasar por `@property`.
 
-## Atributos — Visibilidad obligatoria
+---
 
-Todos los atributos de instancia son **privados** (`self.__nombre`).
-Se exponen solo con `@property` de lectura si otra capa los necesita.
-Añadir setter únicamente si la mutación tiene lógica de validación.
-Ver criterio completo en `instructions/oo-design.instructions.md`.
+## Diseño OO — Visibilidad, Properties y Setters
+
+### Principio fundamental
+
+> **Ocultar la implementación, exponer el comportamiento.**
+> (Principio de encapsulación — Parnas, 1972; reforzado en "Clean Code" y "SOLID".)
+
+Un atributo nunca debe ser público por comodidad. Debe ser público solo si forma parte intencional de la interfaz de la clase.
+
+### `__doble_guion` → Privado (name-mangling)
+
+Usar cuando:
+- El atributo es un **detalle de implementación** que no debe ser accedido ni sobrescrito por subclases.
+- Su modificación directa rompería invariantes del objeto.
+- Es la opción **por defecto** en `entities/`.
 
 ```python
 class Coche(ABC):
     def __init__(self, matricula: str, marca: str) -> None:
         if not matricula:
             raise ValueError("La matrícula no puede estar vacía")
-        self.__matricula: str = matricula
-        self.__marca: str = marca
-        self.__kilometros_recorridos: float = 0.0
-
-    @property
-    def matricula(self) -> str:
-        return self.__matricula
+        self.__matricula: str = matricula        # ← privado
+        self.__kilometros_recorridos: float = 0.0  # ← privado
 ```
+
+### `_un_guion` → Protegido (convención)
+
+Usar **solo** cuando una subclase necesita leerlo o modificarlo directamente y añadir una `@property` sería artificialmente verboso.
+Documentar siempre el motivo.
+
+```python
+class CocheCombustion(Coche):
+    def __init__(self, ...) -> None:
+        self._gasolina: float = 0.0  # accesible por CocheHibrido
+```
+
+### Sin guion → Público
+
+Usar únicamente para:
+- Constantes de clase que son parte de la API pública.
+- Atributos de objetos de datos simples (ej. `Resultado`) donde la transparencia es deliberada.
+
+### Cuándo añadir `@property` (lectura)
+
+Añadir `@property` cuando:
+1. El atributo forma parte de la **interfaz observable** de la entidad (ej. `matricula`, `kilometros_recorridos`).
+2. Otra capa (`services`, `ui`) necesita leerlo para mostrar información.
+3. Podría requerir lógica en el futuro (cálculo derivado, logging, lazy init).
+
+```python
+@property
+def matricula(self) -> str:
+    """Matrícula del coche (solo lectura)."""
+    return self.__matricula
+```
+
+**No añadir `@property`** si el atributo es un detalle interno que nunca sale de la clase.
+
+### Cuándo añadir setter (`@xxx.setter`)
+
+Añadir setter **solo** si se cumplen **las dos** condiciones:
+1. La mutación es parte explícita del **dominio** (ej. asignar un coche a una persona).
+2. Hay **lógica de validación** que debe ejecutarse al asignar.
+
+```python
+@coche.setter
+def coche(self, nuevo_coche: "Coche | None") -> None:
+    """Asigna un coche a la persona; None indica que no tiene coche."""
+    # la validación de negocio vive en Persona.vender_coche(), no aquí
+    self.__coche = nuevo_coche
+```
+
+**No añadir setter** si:
+- El valor se establece solo en `__init__` y no cambia (ej. `matricula`).
+- La mutación se hace a través de un método de dominio con nombre explícito (preferir `transferir_coche()` sobre un setter genérico).
+
+### Resumen rápido de visibilidad
+
+| Situación | Solución |
+|---|---|
+| Atributo interno, no sale de la clase | `self.__atributo` (privado, sin property) |
+| Atributo que services/ui necesita leer | `self.__atributo` + `@property` de lectura |
+| Atributo mutable con validación de dominio | `self.__atributo` + `@property` + `@xxx.setter` |
+| Subclase necesita acceso directo | `self._atributo` (protegido, documentar motivo) |
+| API pública deliberada / constante | sin guion |
+
+---
 
 ## Contrato de errores
 
@@ -51,6 +120,8 @@ def avanzar(self, km: float) -> Resultado:
 ```
 
 Las excepciones (`ValueError`, clases propias de `excepciones.py`) se reservan para **invariantes de construcción** (datos de entrada inválidos que son un bug del llamador).
+
+---
 
 ## Atributos de clase
 
@@ -81,4 +152,3 @@ Documentar el MRO elegido con un comentario en la clase:
 class CocheHibrido(CocheElectrico, CocheCombustion):
     ...
 ```
-
