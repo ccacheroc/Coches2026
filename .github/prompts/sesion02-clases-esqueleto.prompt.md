@@ -120,12 +120,20 @@ Iterar hasta que el alumno valide el diagrama.
 ## Paso 3.1 — El agente crea el esqueleto de la clase principal como ejemplo
 
 Crear **una sola clase** (la más representativa del dominio) con:
-- `__init__` con atributos privados anotados con type hints.
-- `__str__` básico.
+- `__init__` con atributos privados (sin type hints — eso es Sesión 8).
+- Sin `__str__` todavía (eso es Sesión 6).
 - Sin métodos de negocio (eso es Sesión 3).
 - Sin herencia (eso es Sesión 4).
 
-Mostrarla al alumno y explicar brevemente cada decisión.
+```python
+class MiClase:
+    def __init__(self, param1, param2):
+        self.__param1 = param1
+        self.__param2 = param2
+```
+
+Mostrarla al alumno y explicar brevemente cada decisión: por qué los atributos son privados,
+qué significa el doble guion y por qué no hay nada más todavía.
 
 ## Paso 3.2 — El alumno implementa el resto
 
@@ -136,8 +144,8 @@ Pedir al alumno que implemente las demás clases siguiendo el mismo patrón:
 
 Revisar cada clase que presente el alumno y dar feedback específico:
 - ¿Los atributos son privados (`self.__nombre`)?
-- ¿Tiene type hints en `__init__`?
-- ¿El `__str__` es informativo?
+- ¿No hay type hints? (no corresponde esta sesión).
+- ¿No hay `__str__`? (no corresponde esta sesión).
 - ¿Existe `entities/resultado.py` con `Resultado.exito` y `Resultado.error`?
 
 No pasar a la siguiente clase hasta que la actual esté bien.
@@ -148,27 +156,34 @@ Asegurarse de que todos los paquetes tienen su `__init__.py`.
 
 ---
 
-# FASE 4 — TESTS TDD MÍNIMOS (socrático)
+# FASE 4 — TESTS TDD (responsabilidad exclusiva del agente)
 
-## Paso 4.1 — El agente muestra un test de construcción como ejemplo
+> ⚠️ Los alumnos **no escriben los tests** en esta sesión. El agente aplica TDD de forma
+> autónoma como salvaguarda de calidad. Los alumnos observan y entienden el resultado,
+> pero no se espera que sepan escribirlos todavía (eso se trabaja a partir de sesiones posteriores).
 
-Crear el test de construcción de la clase principal en `tests/test_entities.py`:
+## Paso 4.1 — El agente escribe los tests de construcción de todas las clases
+
+Para cada clase creada, el agente genera en `tests/test_entities.py` un test mínimo
+que verifica que el objeto se puede construir sin errores:
 
 ```python
 def test_[clase]_se_crea_correctamente():
     # Given / When
     obj = MiClase("param1", "param2")
 
-    # Then
-    assert str(obj) != ""
+    # Then — el objeto existe y no lanza excepciones
+    assert obj is not None
 ```
 
-## Paso 4.2 — El alumno escribe los tests del resto de clases
+## Paso 4.2 — El agente ejecuta los tests y verifica que pasan
 
-> *"Escribid ahora el test de construcción para [siguiente clase].
-> Recordad la estructura Given/When/Then."*
+```bash
+python -m pytest -q
+```
 
-Verificar que `python -m pytest -q` pasa antes de continuar.
+Si algún test falla, el agente lo corrige antes de continuar.
+El alumno solo necesita ver que todos los tests pasan en verde.
 
 ---
 
@@ -241,8 +256,9 @@ Cuando el alumno indique que ha terminado, realizar una revisión completa y dar
 - ¿El diagrama Mermaid en README.md refleja fielmente el código?
 
 **Código:**
-- ¿Todos los `__init__` tienen type hints en parámetros y atributos?
-- ¿Todos los `__str__` son informativos y sin acceso a datos de otras clases?
+- ¿Todos los `__init__` tienen atributos privados con doble guion?
+- ¿No hay type hints? (no corresponde hasta Sesión 8 — penalizar si los hay porque genera confusión).
+- ¿No hay `__str__`? (no corresponde hasta Sesión 6).
 - ¿Los servicios reciben sus dependencias por inyección (no las crean internamente)?
 - ¿`resultado.py` implementa correctamente `Resultado.exito` y `Resultado.error`?
 
@@ -274,10 +290,13 @@ Si hay errores en rojo, no dar la sesión por terminada hasta que estén corregi
 # REGLAS ESTRICTAS PARA HOY
 
 - Los atributos de dominio son privados (`self.__nombre`). Ver `instructions/entities.instructions.md`.
+- **Sin type hints** — eso es Sesión 8. Si el alumno los añade, explicar que no corresponde todavía.
+- **Sin `__str__`** — eso es Sesión 6. Si el alumno lo añade, explicar que no corresponde todavía.
 - No implementar lógica de negocio todavía — solo estructura.
-- No añadir `@property` todavía salvo que sean imprescindibles para los tests.
+- No añadir `@property` todavía — eso es Sesión 5.
 - `ui/` no importa nada de `entities/`.
 - `entities/resultado.py` debe existir antes de crear los servicios.
+- Los tests los escribe **exclusivamente el agente** — el alumno no debe escribirlos.
 
 ---
 
@@ -293,11 +312,11 @@ Antes de cerrar la sesión, verifica que se cumplen **todos** los criterios:
 
 ## Quality gates específicos de esta sesión
 - [ ] El alumno ha descrito el sistema y el agente lo ha confirmado antes de diseñar
-- [ ] Al menos 3 clases de dominio creadas en `src/entities/`
-- [ ] Todos los atributos de instancia son `self.__privado` (doble guion) con type hints
+- [ ] Al menos 3 clases de dominio creadas en `src/entities/` con atributos `self.__privado`
+- [ ] Sin type hints en el código del alumno (no corresponde hasta Sesión 8)
+- [ ] Sin `__str__` en las clases (no corresponde hasta Sesión 6)
 - [ ] `src/entities/resultado.py` existe con `Resultado.exito` y `Resultado.error`
-- [ ] `__str__` implementado en todas las clases nuevas
-- [ ] Al menos un test de construcción por clase in `tests/test_entities.py`
+- [ ] El agente ha escrito al menos un test de construcción por clase y todos pasan (`pytest -q`)
 - [ ] Al menos un servicio esqueleto creado en `src/services/`
 - [ ] `src/main.py` usa los servicios y arranca sin errores
 - [ ] Diagrama de clases Mermaid actualizado en `README.md` y validado por el alumno
