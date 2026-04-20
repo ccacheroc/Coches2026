@@ -1,13 +1,13 @@
 ---
 applyTo: '**/*.py'
-description: 'Convenciones Python para el proyecto Coches2026'
+description: 'Convenciones Python para el proyecto'
 ---
 
 # Convenciones Python — Coches2026
 
 ## Versión y herramientas
 
-- **Python 3.12+** obligatorio.
+- **Python 3.13+** obligatorio.
 - Formateo: `black` (líneas ≤ 88 caracteres).
 - Linting: `ruff`.
 - Tests: `pytest`.
