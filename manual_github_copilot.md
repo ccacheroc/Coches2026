@@ -53,7 +53,6 @@ Sirven para **adjuntar contexto** a tu mensaje. Copilot incluye ese contenido en
 | `#codebase` | Búsqueda semántica en todo el repositorio |
 | `#sym` | Un símbolo concreto (clase, función, variable…) |
 | `#problems` | Los errores activos del panel de problemas del IDE |
-| `#<nombre>` | Un fichero `.prompt.md` de `.github/prompts/` |
 
 **Ejemplo:**
 ```
@@ -89,6 +88,7 @@ Activan un **modo de comportamiento predefinido**. Son atajos para tareas comune
 | `/newNotebook` | Crea un nuevo Jupyter Notebook |
 | `/clear` | Limpia el historial de la conversación actual |
 | `/help` | Muestra ayuda sobre Copilot Chat |
+| `/<nombre>` | Invoca un fichero `.prompt.md` de `.github/prompts/` ← **prompts propios** |
 
 ### Cómo se combinan los tres
 
@@ -100,14 +100,14 @@ Activan un **modo de comportamiento predefinido**. Son atajos para tareas comune
 /tests para #file:entities/coche_combustion.py
 
 # Iniciar una sesión de prácticas con contexto pedagógico:
-@workspace empieza la sesión de hoy — contexto en #sesion05-propiedades
+@workspace /sesion05-propiedades empieza la sesión de hoy
 ```
 
 | Mecanismo | Pregunta que responde | Ejemplo |
 |---|---|---|
-| `#` | **¿Sobre qué?** (contexto) | `#file`, `#codebase`, `#sesion03-metodos` |
+| `#` | **¿Sobre qué?** (contexto) | `#file`, `#codebase`, `#editor` |
 | `@` | **¿Quién responde?** (agente) | `@workspace`, `@terminal` |
-| `/` | **¿Cómo responde?** (modo) | `/fix`, `/tests`, `/explain` |
+| `/` | **¿Cómo responde?** (modo o prompt) | `/fix`, `/tests`, `/sesion03-metodos` |
 
 ---
 
@@ -513,12 +513,22 @@ El campo `mode` puede ser:
 
 ### Cómo invocarlos
 
-En el chat de Copilot, escribir `#` seguido del nombre del fichero (sin extensión ni ruta):
+En el chat de Copilot, escribir `/` seguido del nombre del fichero (sin extensión ni ruta).
+Copilot los muestra en el autocompletado igual que los comandos built-in:
 
 ```
-@workspace #sesion05-propiedades empieza la sesión de hoy
-/tests para #file:entities/coche.py siguiendo #crear-tests
+# Invocar el prompt de la sesión 5:
+/sesion05-propiedades
+
+# Combinar con agente y contexto de fichero:
+@workspace /sesion05-propiedades — mira el estado actual en #file:entities/coche.py
+
+# Invocar un prompt de generación de tests con contexto:
+/crear-tests para #file:entities/coche_combustion.py
 ```
+
+> ⚠️ **Confusión frecuente**: los prompts `.prompt.md` aparecen con `/` (como slash commands),
+> **no con `#`**. El `#` es exclusivo para referencias de contexto (ficheros, símbolos, selección…).
 
 ### Qué poner en cada prompt file
 
@@ -673,10 +683,16 @@ Se define en `.vscode/mcp.json` o en la configuración de usuario de VS Code:
 
 ### Cómo usar los prompts de sesión
 
-Al inicio de cada sesión práctica, en el chat de Copilot:
+Al inicio de cada sesión práctica, en el chat de Copilot escribir el nombre del prompt como slash command:
 
 ```
-@workspace #sesion04-herencia
+/sesion04-herencia
+```
+
+O combinado con el agente de workspace para que tenga acceso al código:
+
+```
+@workspace /sesion04-herencia
 ```
 
 Copilot cargará el contexto pedagógico de esa sesión: objetivos, tareas del día, restricciones y modo tutor.
@@ -688,7 +704,7 @@ Copilot cargará el contexto pedagógico de esa sesión: objetivos, tareas del d
 ### Empezar una sesión práctica
 
 ```
-@workspace #sesion05-propiedades
+@workspace /sesion05-propiedades
 ¿Por dónde empezamos hoy?
 ```
 
@@ -742,7 +758,7 @@ Sigue el checklist de #file:.github/instructions/architecture.instructions.md
 |---|---|---|---|---|
 | Reglas globales | `copilot-instructions.md` | Automática (siempre) | Copilot | Normas del proyecto |
 | Reglas por capa | `instructions/*.instructions.md` | Automática (`applyTo`) | Copilot | Restricciones específicas de una capa |
-| Tareas reutilizables | `prompts/*.prompt.md` | Manual (`#nombre`) | Copilot | Workflows, sesiones, generadores |
+| Tareas reutilizables | `prompts/*.prompt.md` | Manual (`/nombre`) | Copilot | Workflows, sesiones, generadores |
 | Guía operativa | `AGENTS.md` | Al clonar el repo | Otros agentes IA | Arrancar el proyecto, comandos |
 | Agente externo (IDE+web) | GitHub Marketplace + GitHub App | Instalación en org/cuenta | Copilot en cualquier IDE | Integraciones con servicios (Docker, Azure…) |
 | Agente externo (solo VS Code) | VS Code Marketplace + Extension API | Instalación de extensión | Copilot en VS Code | Herramientas integradas profundamente en el IDE |

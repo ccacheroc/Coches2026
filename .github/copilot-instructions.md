@@ -34,4 +34,4 @@ ui  →  services  →  entities  →  (persistence)
 | `instructions/persistence.instructions.md` | `persistence/**/*.py` (auto) | Adaptadores JSON/Pickle, interfaz de repositorio |
 | `instructions/tests.instructions.md` | `tests/**/*.py` (auto) | Given/When/Then, mocks en UI, nombrado de tests |
 | `instructions/mermaid.instructions.md` | `README.md` (auto) | Reglas UML classDiagram y C4Container |
-| `prompts/sesionXX-*.prompt.md` | manual con `#nombre` | Contexto pedagógico y tareas por sesión |
+| `prompts/sesionXX-*.prompt.md` | manual con `/nombre` | Contexto pedagógico y tareas por sesión |
