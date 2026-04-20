@@ -10,13 +10,14 @@
 1. [Qué es GitHub Copilot y sus modos de uso](#1-qué-es-github-copilot-y-sus-modos-de-uso)
 2. [Los tres mecanismos de interacción: `#`, `@`, `/`](#2-los-tres-mecanismos-de-interacción)
 3. [Herramientas (tools) predefinidas del agente](#3-herramientas-tools-predefinidas-del-agente)
-4. [Estructura de `.github/` para guiar a Copilot](#4-estructura-de-github-para-guiar-a-copilot)
-5. [Instruction files — activación automática](#5-instruction-files--activación-automática)
-6. [Prompt files — invocación manual](#6-prompt-files--invocación-manual)
-7. [AGENTS.md vs copilot-instructions.md](#7-agentsmd-vs-copilot-instructionsmd)
-8. [MCP — ampliar las herramientas del agente](#8-mcp--ampliar-las-herramientas-del-agente)
-9. [Configuración real de este proyecto (Coches2026)](#9-configuración-real-de-este-proyecto-coches2026)
-10. [Recetas de uso habitual](#10-recetas-de-uso-habitual)
+4. [Cómo extender los agentes `@`](#4-cómo-extender-los-agentes-)
+5. [Estructura de `.github/` para guiar a Copilot](#5-estructura-de-github-para-guiar-a-copilot)
+6. [Instruction files — activación automática](#6-instruction-files--activación-automática)
+7. [Prompt files — invocación manual](#7-prompt-files--invocación-manual)
+8. [AGENTS.md vs copilot-instructions.md](#8-agentsmd-vs-copilot-instructionsmd)
+9. [MCP — ampliar las herramientas del agente](#9-mcp--ampliar-las-herramientas-del-agente)
+10. [Configuración real de este proyecto (Coches2026)](#10-configuración-real-de-este-proyecto-coches2026)
+11. [Recetas de uso habitual](#11-recetas-de-uso-habitual)
 
 ---
 
@@ -171,9 +172,258 @@ tarea del usuario
 
 ---
 
-## 4. Estructura de `.github/` para guiar a Copilot
+## 4. Cómo extender los agentes `@`
 
-GitHub Copilot reconoce de forma nativa dos carpetas dentro de `.github/`:
+Los agentes `@` no son un conjunto cerrado: cualquier empresa o desarrollador puede crear uno nuevo y publicarlo. Existen **dos vías** para extender Copilot con agentes propios, según el alcance que se necesite.
+
+---
+
+### Vía 1 — GitHub Copilot Extensions (alcance: GitHub + todos los IDEs)
+
+Son extensiones publicadas en el **GitHub Marketplace** e instaladas a nivel de organización o cuenta de usuario en GitHub. Una vez instaladas, el agente `@nombre` queda disponible en Copilot Chat en **cualquier IDE** (VS Code, JetBrains, Visual Studio…) y en **github.com**.
+
+#### Cómo funcionan internamente
+
+```
+Usuario escribe @docker "crea un Dockerfile para Python"
+        ↓
+GitHub Copilot envía el mensaje al servidor HTTP de la extensión Docker
+        ↓
+El servidor procesa la petición (puede llamar a la API de Docker Hub,
+analizar el repo, etc.) y devuelve una respuesta en streaming SSE
+        ↓
+Copilot muestra la respuesta en el chat como si fuera suya
+```
+
+La extensión expone un **endpoint HTTPS** que recibe peticiones de Copilot siguiendo el protocolo de GitHub Copilot Extensions. Ese endpoint puede estar alojado en cualquier infraestructura (un servidor propio, Vercel, AWS Lambda, etc.).
+
+#### Pasos para instalar una extensión existente
+
+1. Ir a **GitHub Marketplace → Copilot Extensions**.
+2. Buscar la extensión (ej. `Docker for GitHub Copilot`).
+3. Hacer clic en **Install** y elegir la organización o cuenta personal.
+4. En el IDE, escribir `@docker` en el chat — ya está disponible.
+
+#### Extensiones oficiales destacadas en el Marketplace
+
+| Extensión | Agente | Para qué sirve |
+|---|---|---|
+| Docker for GitHub Copilot | `@docker` | Generar Dockerfiles, docker-compose, diagnosticar contenedores |
+| GitHub Copilot for Azure | `@azure` | Desplegar en Azure, consultar recursos, generar IaC |
+| Sentry | `@sentry` | Consultar errores y traces de producción desde el chat |
+| Datadog | `@datadog` | Ver métricas, logs y alertas sin salir del IDE |
+| Perplexity | `@perplexity` | Búsqueda web con respuestas fundamentadas |
+
+#### Cómo crear tu propia GitHub Copilot Extension
+
+Una extensión propia requiere tres componentes:
+
+```
+1. GitHub App          ← identidad de la extensión en GitHub
+2. Servidor HTTP       ← lógica de la extensión (cualquier lenguaje)
+3. Registro en Marketplace (opcional, para distribución pública)
+```
+
+**Esqueleto mínimo en Python (FastAPI):**
+
+```python
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse
+import httpx, json
+
+app = FastAPI()
+
+@app.post("/")
+async def copilot_extension(request: Request):
+    """Endpoint que recibe mensajes de GitHub Copilot."""
+    body = await request.json()
+    messages = body.get("messages", [])
+    ultimo_mensaje = messages[-1]["content"] if messages else ""
+
+    # Aquí va tu lógica: llamar a una API, consultar una BD, etc.
+    respuesta = f"Procesado por mi extensión: {ultimo_mensaje}"
+
+    async def stream():
+        # Copilot espera el formato de OpenAI chat completions en streaming
+        chunk = {
+            "choices": [{"delta": {"content": respuesta}, "finish_reason": None}]
+        }
+        yield f"data: {json.dumps(chunk)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream")
+```
+
+**Configuración del GitHub App** (en github.com/settings/apps):
+- Callback URL: `https://tu-servidor.com/`
+- Copilot: activar "Copilot Extension"
+- Permisos: los que necesite tu extensión (read:user, repo, etc.)
+
+---
+
+### Vía 2 — VS Code Chat Participants (alcance: solo VS Code)
+
+Son extensiones de VS Code que registran un participante de chat usando la **VS Code Extension API**. Solo funcionan en VS Code, no en otros IDEs ni en github.com.
+
+#### Cómo funcionan
+
+Se crean como una extensión de VS Code normal (TypeScript/JavaScript) que llama a `vscode.chat.createChatParticipant`:
+
+```typescript
+// extension.ts
+import * as vscode from 'vscode';
+
+export function activate(context: vscode.ExtensionContext) {
+    // Registrar el participante @mi-agente
+    const agente = vscode.chat.createChatParticipant(
+        'mi-empresa.mi-agente',   // ID interno
+        manejarPeticion            // handler
+    );
+
+    agente.iconPath = vscode.Uri.joinPath(context.extensionUri, 'icon.png');
+}
+
+async function manejarPeticion(
+    request: vscode.ChatRequest,
+    context: vscode.ChatContext,
+    stream: vscode.ChatResponseStream,
+    token: vscode.CancellationToken
+) {
+    // request.prompt contiene lo que escribió el usuario tras @mi-agente
+    const prompt = request.prompt;
+
+    // Puedes acceder al workspace, leer ficheros, llamar APIs, etc.
+    stream.markdown(`Hola desde mi agente. Recibí: **${prompt}**`);
+
+    // También puedes generar código directamente en el editor
+    stream.button({
+        command: 'mi-agente.aplicarSolucion',
+        title: 'Aplicar solución'
+    });
+}
+```
+
+**Estructura mínima del proyecto de la extensión:**
+
+```
+mi-agente-extension/
+├── package.json          ← declara el contribuyente de chat
+├── src/
+│   └── extension.ts      ← lógica del agente
+└── tsconfig.json
+```
+
+**`package.json` relevante:**
+
+```json
+{
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "mi-empresa.mi-agente",
+        "name": "mi-agente",
+        "description": "Mi agente personalizado para este proyecto",
+        "isSticky": true
+      }
+    ]
+  }
+}
+```
+
+---
+
+### Comparativa de las dos vías
+
+| | GitHub Copilot Extension | VS Code Chat Participant |
+|---|---|---|
+| **Alcance** | Todos los IDEs + github.com | Solo VS Code |
+| **Lenguaje del servidor** | Cualquiera (Python, Node, Go…) | TypeScript/JavaScript |
+| **Distribución** | GitHub Marketplace | VS Code Marketplace |
+| **Instalación** | A nivel de organización GitHub | A nivel de usuario de VS Code |
+| **Acceso al workspace** | Solo lo que el usuario envíe | Acceso completo via VS Code API |
+| **Ideal para** | Integraciones con servicios externos | Herramientas profundamente integradas con el IDE |
+
+---
+
+### Ejemplo completo: usar `@docker` en un proyecto Python
+
+#### 1. Instalar la extensión
+
+En GitHub Marketplace, buscar **"Docker for GitHub Copilot"** e instalar.
+
+#### 2. Uso en el chat de Copilot
+
+```
+# Generar un Dockerfile optimizado para este proyecto
+@docker genera un Dockerfile para una app Python 3.12 con pytest
+
+# Diagnosticar un contenedor que falla
+@docker el contenedor webapp sale con código 1 al arrancar,
+mira #terminalLastCommand y dime qué puede estar fallando
+
+# Generar docker-compose con varios servicios
+@docker crea un docker-compose.yml con un servicio app Python
+y un servicio postgres 16
+
+# Optimizar una imagen existente
+@docker analiza #file:Dockerfile y sugiere cómo reducir el tamaño final
+```
+
+#### 3. Ejemplo de Dockerfile que generaría `@docker` para este proyecto
+
+```dockerfile
+# ---- Etapa de build ----
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+# Copiar solo dependencias primero (caché de capas)
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir pytest
+
+# ---- Etapa final ----
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Copiar dependencias instaladas desde builder
+COPY --from=builder /usr/local/lib/python3.12 /usr/local/lib/python3.12
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copiar código fuente
+COPY . .
+
+# Usuario no-root por seguridad
+RUN adduser --disabled-password --gecos "" appuser
+USER appuser
+
+# Punto de entrada
+CMD ["python", "main.py"]
+```
+
+#### 4. Combinar `@docker` con los instruction files del proyecto
+
+Si tienes un `instructions/docker.instructions.md` con `applyTo: 'Dockerfile'`, las reglas se inyectan automáticamente cuando editas el Dockerfile y usas `@docker` en ese contexto:
+
+```markdown
+---
+applyTo: 'Dockerfile'
+description: 'Convenciones Docker para este proyecto'
+---
+
+# Reglas Docker — Coches2026
+- Usar siempre imagen base `python:3.12-slim` (no `latest`).
+- Builds multi-stage obligatorios para reducir tamaño final.
+- El proceso no debe correr como root; usar usuario `appuser`.
+- El CMD debe ser `python main.py`.
+```
+
+---
+
+## 5. Estructura de `.github/` para guiar a Copilot
+
+GitHub Copilot reconoce de forma nativa estas carpetas dentro de `.github/`:
 
 ```
 .github/
@@ -188,7 +438,7 @@ GitHub Copilot reconoce de forma nativa dos carpetas dentro de `.github/`:
 
 ---
 
-## 5. Instruction files — activación automática
+## 6. Instruction files — activación automática
 
 ### Qué son
 
@@ -238,7 +488,7 @@ Lo que **no** debe ir aquí: tareas concretas de un día, contexto pedagógico p
 
 ---
 
-## 6. Prompt files — invocación manual
+## 7. Prompt files — invocación manual
 
 ### Qué son
 
@@ -278,7 +528,7 @@ En el chat de Copilot, escribir `#` seguido del nombre del fichero (sin extensi�
 
 ---
 
-## 7. AGENTS.md vs copilot-instructions.md
+## 8. AGENTS.md vs copilot-instructions.md
 
 Son dos ficheros con propósitos complementarios, **no redundantes**. Cada uno tiene una audiencia diferente.
 
@@ -335,7 +585,7 @@ python -m pytest -q
 
 ---
 
-## 8. MCP — ampliar las herramientas del agente
+## 9. MCP — ampliar las herramientas del agente
 
 **MCP (Model Context Protocol)** es el estándar abierto de Anthropic (adoptado por Copilot desde 2025) que permite añadir herramientas externas al agente mediante servidores MCP.
 
@@ -369,7 +619,7 @@ Se define en `.vscode/mcp.json` o en la configuración de usuario de VS Code:
 
 ---
 
-## 9. Configuración real de este proyecto (Coches2026)
+## 10. Configuración real de este proyecto (Coches2026)
 
 ### Estructura completa de `.github/`
 
@@ -433,7 +683,7 @@ Copilot cargará el contexto pedagógico de esa sesión: objetivos, tareas del d
 
 ---
 
-## 10. Recetas de uso habitual
+## 11. Recetas de uso habitual
 
 ### Empezar una sesión práctica
 
@@ -488,11 +738,13 @@ Sigue el checklist de #file:.github/instructions/architecture.instructions.md
 
 ## Apéndice — Comparativa de mecanismos
 
-| Mecanismo | Fichero | Activación | Audiencia | Mejor para |
+| Mecanismo | Fichero / lugar | Activación | Audiencia | Mejor para |
 |---|---|---|---|---|
 | Reglas globales | `copilot-instructions.md` | Automática (siempre) | Copilot | Normas del proyecto |
 | Reglas por capa | `instructions/*.instructions.md` | Automática (`applyTo`) | Copilot | Restricciones específicas de una capa |
 | Tareas reutilizables | `prompts/*.prompt.md` | Manual (`#nombre`) | Copilot | Workflows, sesiones, generadores |
 | Guía operativa | `AGENTS.md` | Al clonar el repo | Otros agentes IA | Arrancar el proyecto, comandos |
-| Skill externa | Servidor MCP | Configuración `.vscode/mcp.json` | Copilot agente | Integraciones externas (GitHub, DB…) |
+| Agente externo (IDE+web) | GitHub Marketplace + GitHub App | Instalación en org/cuenta | Copilot en cualquier IDE | Integraciones con servicios (Docker, Azure…) |
+| Agente externo (solo VS Code) | VS Code Marketplace + Extension API | Instalación de extensión | Copilot en VS Code | Herramientas integradas profundamente en el IDE |
+| Skill externa (tools) | Servidor MCP + `.vscode/mcp.json` | Configuración explícita | Copilot agente | Acceso a APIs, BD, contenedores desde el agente |
 
