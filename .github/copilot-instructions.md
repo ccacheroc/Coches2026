@@ -18,6 +18,15 @@ ui  →  services  →  entities  →  (persistence)
 
 ---
 
+## Flujo de trabajo Git
+
+- Se trabaja **directamente sobre `main`** — no hay ramas de trabajo.
+- Antes de empezar cada sesión: `git pull origin main`.
+- Al terminar cada sesión: `git push origin main`.
+- Mensaje de commit: `"sesionXX: descripción corta en español"`.
+
+---
+
 ## Reglas que NUNCA deben violarse
 
 1. **`ui` no puede importar `entities`** — solo puede importar `services`.

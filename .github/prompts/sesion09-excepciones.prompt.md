@@ -7,6 +7,8 @@ description: 'Sesión 9 — Añadir jerarquía de excepciones propias del domini
 Estamos en la **Sesión 9** de la asignatura.
 El objetivo de hoy es añadir **manejo de excepciones** propio del dominio.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Crear una jerarquía de excepciones propias en `entities/excepciones.py`:
@@ -93,5 +95,5 @@ Al terminar, crea o actualiza `journal/sesion09.md` y haz commit:
 ```bash
 git add journal/sesion09.md
 git commit -m "sesion09: journal de sesión"
-git push origin sesion09-excepciones
+git push origin main
 ```

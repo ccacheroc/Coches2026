@@ -7,6 +7,8 @@ description: 'Sesión 3 — Añadir métodos de instancia y de clase a las entid
 Estamos en la **Sesión 3** de la asignatura.
 El objetivo de hoy es enriquecer el diagrama de clases y el código con **métodos de instancia y de clase**.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Revisar el diagrama de clases actual e identificar qué comportamientos faltan.
@@ -80,5 +82,5 @@ Al terminar, crea o actualiza `journal/sesion03.md` y haz commit:
 ```bash
 git add journal/sesion03.md
 git commit -m "sesion03: journal de sesión"
-git push origin sesion03-metodos
+git push origin main
 ```

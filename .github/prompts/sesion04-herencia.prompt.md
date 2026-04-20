@@ -7,6 +7,8 @@ description: 'Sesión 4 — Refinar el diagrama y el código añadiendo relacion
 Actualmente estamos en la **Sesión 4** de la asignatura.
 El objetivo de hoy es refinar nuestro diagrama de clases y el código de la capa de `entities/` añadiendo relaciones de herencia.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 1. Analizar las entidades actuales y detectar oportunidades de herencia (clases padre e hijas).
 2. Crear la clase padre con los atributos comunes.
@@ -73,5 +75,5 @@ Al terminar, crea o actualiza `journal/sesion04.md` y haz commit:
 ```bash
 git add journal/sesion04.md
 git commit -m "sesion04: journal de sesión"
-git push origin sesion04-herencia
+git push origin main
 ```

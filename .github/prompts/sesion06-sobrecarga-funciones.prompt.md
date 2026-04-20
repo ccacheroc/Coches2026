@@ -7,6 +7,8 @@ description: 'Sesión 6 — Implementar sobrecarga de funciones built-in (__str_
 Estamos en la **Sesión 6** de la asignatura.
 El objetivo de hoy es implementar la **sobrecarga de funciones built-in** de Python.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Implementar `__str__` en todas las entidades para producir salida legible por el usuario final.
@@ -78,5 +80,5 @@ Al terminar, crea o actualiza `journal/sesion06.md` y haz commit:
 ```bash
 git add journal/sesion06.md
 git commit -m "sesion06: journal de sesión"
-git push origin sesion06-sobrecarga-funciones
+git push origin main
 ```

@@ -7,6 +7,8 @@ description: 'Sesión 11 — Añadir persistencia en ficheros binarios (pickle)'
 Estamos en la **Sesión 11** de la asignatura.
 El objetivo de hoy es añadir **persistencia en ficheros binarios** usando `pickle`.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Crear adaptadores binarios en `persistence/`:
@@ -105,5 +107,5 @@ Al terminar, crea o actualiza `journal/sesion11.md` y haz commit:
 ```bash
 git add journal/sesion11.md
 git commit -m "sesion11: journal de sesión"
-git push origin sesion11-ficheros-binarios
+git push origin main
 ```

@@ -7,6 +7,8 @@ description: 'Sesión 2 — Definir el diagrama de clases inicial y crear los es
 Estamos en la **Sesión 2** de la asignatura.
 El objetivo de hoy es diseñar el diagrama de clases inicial de nuestra app y crear los esqueletos de clase en `entities/`.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. A partir de la idea del proyecto, identificar las **clases principales** del dominio.
@@ -86,5 +88,5 @@ Al terminar, crea o actualiza `journal/sesion02.md` y haz commit:
 ```bash
 git add journal/sesion02.md
 git commit -m "sesion02: journal de sesión"
-git push origin sesion02-clases-esqueleto
+git push origin main
 ```

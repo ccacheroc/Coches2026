@@ -7,6 +7,8 @@ description: 'Sesión 12 — Crear un ejecutable distribuible con PyInstaller'
 Estamos en la **Sesión 12** de la asignatura.
 El objetivo de hoy es crear un **ejecutable distribuible** de la aplicación.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Instalar `PyInstaller`:
@@ -114,5 +116,5 @@ Al terminar, crea o actualiza `journal/sesion12.md` y haz commit. Esta es la úl
 ```bash
 git add journal/sesion12.md
 git commit -m "sesion12: journal final del curso"
-git push origin sesion12-ejecutable
+git push origin main
 ```

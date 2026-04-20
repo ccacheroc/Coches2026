@@ -7,6 +7,8 @@ description: 'Sesión 7 — Sobrecarga de operadores matemáticos, comparación 
 Estamos en la **Sesión 7** de la asignatura.
 El objetivo de hoy es implementar la **sobrecarga de operadores**.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Implementar `__eq__` y `__hash__` en las entidades que tienen identidad (igualdad por identificador único).
@@ -81,5 +83,5 @@ Al terminar, crea o actualiza `journal/sesion07.md` y haz commit:
 ```bash
 git add journal/sesion07.md
 git commit -m "sesion07: journal de sesión"
-git push origin sesion07-sobrecarga-operadores
+git push origin main
 ```

@@ -7,6 +7,8 @@ description: 'Sesión 10 — Añadir persistencia en ficheros de texto plano (JS
 Estamos en la **Sesión 10** de la asignatura.
 El objetivo de hoy es añadir **persistencia en ficheros de texto plano**.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Decidir el formato de serialización (recomendado: JSON por legibilidad). Documentar la decisión.
@@ -85,5 +87,5 @@ Al terminar, crea o actualiza `journal/sesion10.md` y haz commit:
 ```bash
 git add journal/sesion10.md
 git commit -m "sesion10: journal de sesión"
-git push origin sesion10-ficheros-texto
+git push origin main
 ```

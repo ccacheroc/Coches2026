@@ -7,6 +7,8 @@ description: 'Sesión 8 — Añadir type hinting completo (PEP 484 / PEP 526)'
 Estamos en la **Sesión 8** de la asignatura.
 El objetivo de hoy es añadir **type hinting completo** (PEP 484 / PEP 526) a todo el código.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Añadir type hints a **todas** las firmas públicas que aún no los tengan:
@@ -86,5 +88,5 @@ Al terminar, crea o actualiza `journal/sesion08.md` y haz commit:
 ```bash
 git add journal/sesion08.md
 git commit -m "sesion08: journal de sesión"
-git push origin sesion08-type-hinting
+git push origin main
 ```

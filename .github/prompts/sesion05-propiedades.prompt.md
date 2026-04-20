@@ -7,6 +7,8 @@ description: 'Sesión 5 — Añadir @property, herencia múltiple y clases abstr
 Estamos en la **Sesión 5** de la asignatura.
 El objetivo de hoy es enriquecer el diseño con **propiedades (`@property`)**, **herencia múltiple** y **clases abstractas** donde proceda.
 
+> 🔄 **Antes de empezar**: `git pull origin main` para tener el código actualizado.
+
 # TAREAS DE HOY (WORKFLOW)
 
 1. Convertir la clase base principal en clase abstracta con `ABC` y decorar con `@abstractmethod` los métodos que cada subclase debe implementar obligatoriamente.
@@ -79,5 +81,5 @@ Al terminar, crea o actualiza `journal/sesion05.md` y haz commit:
 ```bash
 git add journal/sesion05.md
 git commit -m "sesion05: journal de sesión"
-git push origin sesion05-propiedades
+git push origin main
 ```
