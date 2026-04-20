@@ -752,15 +752,7 @@ Sigue el checklist de #file:.github/instructions/architecture.instructions.md
 
 ---
 
-## Apéndice — Comparativa de mecanismos
+## Referencias y documentación oficial
 
-| Mecanismo | Fichero / lugar | Activación | Audiencia | Mejor para |
-|---|---|---|---|---|
-| Reglas globales | `copilot-instructions.md` | Automática (siempre) | Copilot | Normas del proyecto |
-| Reglas por capa | `instructions/*.instructions.md` | Automática (`applyTo`) | Copilot | Restricciones específicas de una capa |
-| Tareas reutilizables | `prompts/*.prompt.md` | Manual (`/nombre`) | Copilot | Workflows, sesiones, generadores |
-| Guía operativa | `AGENTS.md` | Al clonar el repo | Otros agentes IA | Arrancar el proyecto, comandos |
-| Agente externo (IDE+web) | GitHub Marketplace + GitHub App | Instalación en org/cuenta | Copilot en cualquier IDE | Integraciones con servicios (Docker, Azure…) |
-| Agente externo (solo VS Code) | VS Code Marketplace + Extension API | Instalación de extensión | Copilot en VS Code | Herramientas integradas profundamente en el IDE |
-| Skill externa (tools) | Servidor MCP + `.vscode/mcp.json` | Configuración explícita | Copilot agente | Acceso a APIs, BD, contenedores desde el agente |
-
+- [Cómo añadir instrucciones personalizadas a un repositorio — GitHub Docs](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions)
+- [awesome-copilot — Colección de instrucciones, prompts y extensiones de la comunidad](https://github.com/github/awesome-copilot/blob/main/README.md)
