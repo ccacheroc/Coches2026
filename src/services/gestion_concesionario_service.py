@@ -4,11 +4,11 @@ Ejemplo:
     >>> # Se instancia con un Concesionario y se llama a sus metodos.
 """
 
-from entities.coche_combustion import CocheCombustion
-from entities.coche_electrico import CocheElectrico
-from entities.coche_hibrido import CocheHibrido
-from entities.coche import Coche
-from entities.resultado import Resultado
+from src.entities.coche_combustion import CocheCombustion
+from src.entities.coche_electrico import CocheElectrico
+from src.entities.coche_hibrido import CocheHibrido
+from src.entities.coche import Coche
+from src.entities.resultado import Resultado
 
 
 class GestionConcesionarioService:

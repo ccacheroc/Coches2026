@@ -5,7 +5,7 @@ Ejemplo:
 """
 
 
-from entities.resultado import Resultado
+from src.entities.resultado import Resultado
 
 
 class Concesionario:

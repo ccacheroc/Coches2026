@@ -4,7 +4,7 @@ Ejemplo:
     >>> # SeedDataService(...).cargar_datos_demo()
 """
 
-from entities.resultado import Resultado
+from src.entities.resultado import Resultado
 
 
 class SeedDataService:

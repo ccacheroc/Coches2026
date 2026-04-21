@@ -4,8 +4,8 @@ Ejemplo:
     >>> # Se instancia con un Concesionario y se llama a sus metodos.
 """
 
-from entities.persona import Persona
-from entities.resultado import Resultado
+from src.entities.persona import Persona
+from src.entities.resultado import Resultado
 
 
 class GestionPersonasService:

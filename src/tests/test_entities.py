@@ -1,9 +1,9 @@
-from entities.coche import Coche
-from entities.coche_combustion import CocheCombustion
-from entities.coche_electrico import CocheElectrico
-from entities.coche_hibrido import CocheHibrido
-from entities.concesionario import Concesionario
-from entities.persona import Persona
+from src.entities.coche import Coche
+from src.entities.coche_combustion import CocheCombustion
+from src.entities.coche_electrico import CocheElectrico
+from src.entities.coche_hibrido import CocheHibrido
+from src.entities.concesionario import Concesionario
+from src.entities.persona import Persona
 
 
 def test_coche_combustion_avanza_si_hay_gasolina():

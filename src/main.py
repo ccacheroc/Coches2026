@@ -4,11 +4,11 @@ Ejemplo:
     $ python main.py
 """
 
-from entities.concesionario import Concesionario
-from services.gestion_concesionario_service import GestionConcesionarioService
-from services.gestion_personas_service import GestionPersonasService
-from services.seed_data_service import SeedDataService
-from ui.menu import MenuCLI
+from src.entities import Concesionario
+from src.services.gestion_concesionario_service import GestionConcesionarioService
+from src.services.gestion_personas_service import GestionPersonasService
+from src.services.seed_data_service import SeedDataService
+from src.ui.menu import MenuCLI
 
 
 def main():

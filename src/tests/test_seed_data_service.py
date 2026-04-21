@@ -1,7 +1,7 @@
-from entities.concesionario import Concesionario
-from services.gestion_concesionario_service import GestionConcesionarioService
-from services.gestion_personas_service import GestionPersonasService
-from services.seed_data_service import SeedDataService
+from src.entities.concesionario import Concesionario
+from src.services.gestion_concesionario_service import GestionConcesionarioService
+from src.services.gestion_personas_service import GestionPersonasService
+from src.services.seed_data_service import SeedDataService
 
 
 def test_seed_carga_datos_demo_en_concesionario_vacio():

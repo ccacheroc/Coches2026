@@ -5,8 +5,8 @@ Ejemplo:
     >>> coche.recargar(20)
 """
 
-from entities.coche import Coche
-from entities.resultado import Resultado
+from src.entities.coche import Coche
+from src.entities.resultado import Resultado
 
 
 class CocheElectrico(Coche):

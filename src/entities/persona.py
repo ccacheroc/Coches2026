@@ -4,7 +4,7 @@ Ejemplo:
     >>> persona = Persona("12345678A", "Ana", "Lopez")
 """
 
-from entities.resultado import Resultado
+from src.entities.resultado import Resultado
 
 
 class Persona:

@@ -5,8 +5,8 @@ Ejemplo:
     >>> coche.repostar(10)
 """
 
-from entities.coche import Coche
-from entities.resultado import Resultado
+from src.entities.coche import Coche
+from src.entities.resultado import Resultado
 
 
 class CocheCombustion(Coche):

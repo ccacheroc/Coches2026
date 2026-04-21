@@ -1,5 +1,5 @@
-from entities.resultado import Resultado
-from ui.menu import MenuCLI
+from src.entities.resultado import Resultado
+from src.ui.menu import MenuCLI
 
 
 class FakeConcesionarioService:

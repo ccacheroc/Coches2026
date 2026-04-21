@@ -6,7 +6,7 @@ Ejemplo:
 
 from abc import ABC, abstractmethod
 
-from entities.resultado import Resultado
+from src.entities.resultado import Resultado
 
 
 class Coche(ABC):

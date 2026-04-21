@@ -121,7 +121,7 @@ mkdir src
 Contenido de `src/main.py`:
 
 ```python
-def main() -> None:
+def main():
     print("¡Hola, mundo!")
 
 if __name__ == "__main__":

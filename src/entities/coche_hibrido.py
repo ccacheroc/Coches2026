@@ -5,9 +5,9 @@ Ejemplo:
     >>> coche.recargar(5)
 """
 
-from entities.coche_combustion import CocheCombustion
-from entities.coche_electrico import CocheElectrico
-from entities.resultado import Resultado
+from src.entities.coche_combustion import CocheCombustion
+from src.entities.coche_electrico import CocheElectrico
+from src.entities.resultado import Resultado
 
 
 class CocheHibrido(CocheElectrico, CocheCombustion):

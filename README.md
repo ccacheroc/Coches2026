@@ -88,7 +88,7 @@ El conjunto actual (`tests/test_entities.py`) cubre casos clave: avance por tipo
 ## Ejemplo rápido de uso en código
 
 ```python
-from entities.coche_hibrido import CocheHibrido
+from src.entities import CocheHibrido
 
 coche = CocheHibrido("3333CCC", "Toyota")
 coche.recargar(2)

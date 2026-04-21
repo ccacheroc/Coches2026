@@ -1,7 +1,7 @@
-from entities.coche_combustion import CocheCombustion
-from entities.concesionario import Concesionario
-from entities.persona import Persona
-from services.gestion_personas_service import GestionPersonasService
+from src.entities.coche_combustion import CocheCombustion
+from src.entities.concesionario import Concesionario
+from src.entities.persona import Persona
+from src.services.gestion_personas_service import GestionPersonasService
 
 
 def test_alta_cliente_sin_coche():

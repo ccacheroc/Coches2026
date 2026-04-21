@@ -1,9 +1,9 @@
-from entities.coche_combustion import CocheCombustion
-from entities.coche_electrico import CocheElectrico
-from entities.coche_hibrido import CocheHibrido
-from entities.concesionario import Concesionario
-from entities.persona import Persona
-from services.gestion_concesionario_service import GestionConcesionarioService
+from src.entities.coche_combustion import CocheCombustion
+from src.entities.coche_electrico import CocheElectrico
+from src.entities.coche_hibrido import CocheHibrido
+from src.entities.concesionario import Concesionario
+from src.entities.persona import Persona
+from src.services.gestion_concesionario_service import GestionConcesionarioService
 
 
 def test_alta_coche_crea_e_incorpora():
